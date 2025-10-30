@@ -1,0 +1,33 @@
+<app-loading-overlay
+  [active]="busy"
+  [message]="carregando ? 'Carregando dados da oficina...' : 'Salvando alterações...'">
+</app-loading-overlay>
+
+<div class="page-shell">
+  <!-- resto permanece igual -->
+  <div class="page-header">
+    <h1>{{ titulo }}</h1>
+
+    <div class="page-header-actions">
+      <button mat-stroked-button color="primary" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Voltar</span>
+      </button>
+
+      <button mat-raised-button color="primary"
+              [disabled]="form.invalid || salvando"
+              (click)="salvar()">
+        <mat-icon>save</mat-icon>
+        <span>Salvar</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h2 class="form-title">Dados da Oficina</h2>
+
+    <form [formGroup]="form" class="form-grid">
+      <!-- campos... -->
+    </form>
+  </div>
+</div>

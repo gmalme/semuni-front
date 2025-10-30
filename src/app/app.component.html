@@ -1,0 +1,54 @@
+<mat-sidenav-container class="layout-root">
+
+  <!-- SIDEBAR -->
+  <mat-sidenav
+    #drawer
+    class="app-sidenav"
+    [mode]="'side'"
+    [opened]="opened()"
+  >
+    <div class="side-header">
+      <img src="assets/unb-logo1.png" alt="UnB" class="logo" />
+      <div class="side-header-text">
+        <div class="title">Extensão Oficina</div>
+        <div class="subtitle">UnB</div>
+      </div>
+    </div>
+
+    <mat-nav-list class="nav-list">
+      <a mat-list-item routerLink="/oficinas" routerLinkActive="active-link">
+        <mat-icon class="nav-icon" matListIcon>home_repair_service</mat-icon>
+        <span class="nav-text">Oficinas</span>
+      </a>
+
+      <a mat-list-item routerLink="/carros" routerLinkActive="active-link">
+        <mat-icon class="nav-icon" matListIcon>directions_car</mat-icon>
+        <span class="nav-text">Carros</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- ÁREA PRINCIPAL -->
+  <mat-sidenav-content class="content-area">
+
+    <!-- TOPBAR -->
+    <mat-toolbar class="topbar">
+      <button mat-icon-button class="menu-btn" (click)="toggleMenu()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="topbar-title">
+        Projeto de Extensão - UnB
+      </div>
+
+      <div class="topbar-fill"></div>
+    </mat-toolbar>
+
+    <!-- CONTEÚDO -->
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

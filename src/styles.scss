@@ -1,0 +1,76 @@
+@use '@angular/material' as mat;
+
+/* Material Design v2 theme API */
+@include mat.core();
+
+$unb-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 500);
+$unb-accent:  mat.m2-define-palette(mat.$m2-green-palette, 600);
+$unb-warn:    mat.m2-define-palette(mat.$m2-red-palette);
+
+$unb-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $unb-primary,
+    accent: $unb-accent,
+    warn: $unb-warn
+  ),
+  density: 0
+));
+
+@include mat.all-component-themes($unb-theme);
+
+/* --------- Layout tokens --------- */
+:root {
+  --sidebar-bg: #002e61;
+  --sidebar-header-bg: #003366;
+  --sidebar-accent: #00a14b;
+  --topbar-bg: #003366;
+  --page-bg: #f5f7fa;
+  --text-main: #1a1a1a;
+  --radius-card: 12px;
+  --radius-field: 8px;
+  --border-card: rgba(0,0,0,0.05);
+  --shadow-card: 0 16px 40px rgba(0,0,0,0.06);
+  --max-page-width: 1280px;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--page-bg);
+  color: var(--text-main);
+}
+
+/* Helpers globais */
+.full-width-table {
+  width: 100%;
+}
+
+/* Grid responsivo para formulários: 1 col no mobile, 2 cols no >=768px */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.full-col {
+  grid-column: 1 / -1;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Material form fields full width */
+mat-form-field {
+  width: 100%;
+}

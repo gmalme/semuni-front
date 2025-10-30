@@ -1,0 +1,53 @@
+<!-- overlay de loading -->
+<app-loading-overlay
+  [active]="carregando"
+  message="Carregando oficinas...">
+</app-loading-overlay>
+
+<div class="page-shell">
+
+  <div class="page-header">
+    <h1>Oficinas</h1>
+    <div class="page-header-actions">
+      <button mat-raised-button color="primary" (click)="novo()">
+        <mat-icon>add</mat-icon>
+        <span>Incluir</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrapper mat-elevation-z2">
+    <table mat-table [dataSource]="data" class="full-width-table">
+      <!-- ... resto da tabela igual já estava ... -->
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let o">{{ o.nome }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="endereco">
+        <th mat-header-cell *matHeaderCellDef>Endereço</th>
+        <td mat-cell *matCellDef="let o">{{ o.endereco }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="especialidade">
+        <th mat-header-cell *matHeaderCellDef>Especialidade</th>
+        <td mat-cell *matCellDef="let o">{{ o.especialidade }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="actions-col"></th>
+        <td mat-cell *matCellDef="let o" class="actions-col">
+          <button mat-icon-button color="primary" (click)="editar(o)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deletar(o)" matTooltip="Excluir">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
