@@ -31,8 +31,23 @@
             <p>{{ r.diagnosticoCurto }}</p>
 
             <h3 class="mt">Melhor Oficina</h3>
+
+            <!-- Select de oficinas: pré-seleciona o id sugerido pela IA; o usuário pode trocar -->
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Escolher oficina</mat-label>
+                <mat-select
+                        [value]="selectedOficinaId()"
+                        (selectionChange)="onSelectOficina($event.value)"
+                        [disabled]="gerando || oficinas.length"
+                >
+                    <mat-option *ngFor="let o of oficinas" [value]="o.id">
+                        {{ o.nome }} <span *ngIf="o.especialidade"> — {{ o.especialidade }}</span>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
             <ng-container *ngIf="melhorOficina() as of; else idSeco">
-                <p>
+                <p class="mt-sm">
                     <strong>{{ of.nome }}</strong>
                     <span *ngIf="of.especialidade"> — {{ of.especialidade }}</span>
                 </p>
@@ -41,7 +56,7 @@
                 </button>
             </ng-container>
             <ng-template #idSeco>
-                <p>Oficina ID: {{ r.melhorOficinaId }}</p>
+                <p>Oficina ID: {{ resultado()?.melhorOficinaId }}</p>
             </ng-template>
         </mat-card-content>
 

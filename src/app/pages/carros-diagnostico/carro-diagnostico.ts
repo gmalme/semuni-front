@@ -1,18 +1,19 @@
-// carro-diagnostico.component.ts
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {CarroService} from "../../services/carro.service";
-import {LoadingOverlayComponent} from "../../shared/loading-overlay.component";
-import {Carro} from "../../models/carro";
-import {Oficina} from "../../models/oficina";
-import {AiService, DiagnosticoResponse} from "../../services/ai.service";
-import {OficinaService} from "../../services/oficina.service";
-import {forkJoin} from "rxjs";
+import { MatFormFieldModule } from '@angular/material/form-field';   // +++
+import { MatSelectModule } from '@angular/material/select';         // +++
+import { CarroService } from '../../services/carro.service';
+import { LoadingOverlayComponent } from '../../shared/loading-overlay.component';
+import { Carro } from '../../models/carro';
+import { Oficina } from '../../models/oficina';
+import { AiService, DiagnosticoResponse } from '../../services/ai.service';
+import { OficinaService } from '../../services/oficina.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-carro-diagnostico',
@@ -23,6 +24,8 @@ import {forkJoin} from "rxjs";
         MatCardModule,
         MatIconModule,
         MatProgressSpinnerModule,
+        MatFormFieldModule,   // +++
+        MatSelectModule,      // +++
         LoadingOverlayComponent,
         RouterLink
     ],
@@ -39,11 +42,19 @@ export class CarroDiagnosticoComponent implements OnInit {
     carro?: Carro;
     oficinas: Oficina[] = [];
 
+    // resultado da IA
     resultado = signal<DiagnosticoResponse | null>(null);
-    melhorOficina = computed(() => {
-        const r = this.resultado();
-        if (!r) return undefined;
-        return this.oficinas.find(o => o.id === r.melhorOficinaId);
+
+    // id selecionado no <mat-select> (começa null; após IA, definimos para a sugestão)
+    selectedOficinaId = signal<number | null>(null); // +++
+
+    // Computado: resolve a oficina selecionada (prioriza o select; se vazio, cai no id da IA)
+    melhorOficina = computed(() => {                  // (reaproveitando o mesmo nome)
+        const idSelecionado = this.selectedOficinaId();
+        const idIa = this.resultado()?.melhorOficinaId ?? null;
+        const id = (idSelecionado != null) ? idSelecionado : idIa;
+        if (id == null) return undefined;
+        return this.oficinas.find(o => o.id === id);
     });
 
     constructor(
@@ -59,13 +70,19 @@ export class CarroDiagnosticoComponent implements OnInit {
         this.carregando = true;
 
         forkJoin({
-            carro: this.carroService.get(this.id),   // Observable<Carro>
-            oficinas: this.oficinaService.list()     // Observable<Oficina[]>
+            carro: this.carroService.get(this.id),
+            oficinas: this.oficinaService.list()
         }).subscribe({
             next: ({ carro, oficinas }) => {
                 this.carro = carro;
                 this.oficinas = oficinas ?? [];
                 this.carregando = false;
+
+                // se já houver um resultado de IA (edge cases), tenta pré-selecionar
+                const r = this.resultado();
+                if (r?.melhorOficinaId != null) {
+                    this.selectedOficinaId.set(Number(r.melhorOficinaId));
+                }
             },
             error: (err) => {
                 console.error(err);
@@ -78,31 +95,50 @@ export class CarroDiagnosticoComponent implements OnInit {
     gerarIA(): void {
         if (!this.carro?.problema) return;
         this.gerando = true;
+
         this.ai.diagnosticar({
             problema: this.carro.problema,
-
             oficinas: this.oficinas.map(o => ({
                 id: o.id,
                 nome: o.nome,
-                especialidade: (o as any).especialidade, // se existir no seu modelo
-                descricao: (o as any).descricao          // se existir no seu modelo
+                especialidade: (o as any).especialidade,
+                descricao: (o as any).descricao
             }))
         }).subscribe({
-            next: (r) => { this.resultado.set(r); this.gerando = false; },
-            error: (e) => { console.error(e); this.erro = 'Erro ao gerar diagnóstico.'; this.gerando = false; }
+            next: (r) => {
+                this.resultado.set(r);
+                // pré-seleciona no <mat-select> a oficina sugerida
+                this.selectedOficinaId.set(r.melhorOficinaId != null ? Number(r.melhorOficinaId) : null);
+                this.gerando = false;
+            },
+            error: (e) => {
+                console.error(e);
+                this.erro = 'Erro ao gerar diagnóstico.';
+                this.gerando = false;
+            }
         });
+    }
+
+    // handler do <mat-select>
+    onSelectOficina(id: number | null): void {        // +++
+        this.selectedOficinaId.set(id);
     }
 
     aplicarNoCarro(): void {
         const r = this.resultado();
         if (!this.carro || !r) return;
 
-        const payload: Partial<Carro> = {
+        const chosenId = this.selectedOficinaId() ?? r.melhorOficinaId ?? null;
+
+        // MONTA O CARRO COMPLETO (PUT = replace): mantém todos os campos existentes
+        const fullPayload: Carro = {
+            ...this.carro,                         // mantém modelo, marca, ano, etc.
+            id: this.carro.id!,                    // garante id no corpo
             diagnostico: r.diagnosticoCurto,
-            ...(r.melhorOficinaId != null ? { oficina: { id: r.melhorOficinaId } } : {})
+            oficina: chosenId != null ? ({ id: chosenId } as any) : null
         };
 
-        this.carroService.update(this.carro.id!, payload).subscribe({
+        this.carroService.update(this.carro.id!, fullPayload).subscribe({
             next: () => this.router.navigate(['/carros']),
             error: (e) => { console.error(e); this.erro = 'Erro ao salvar alterações no carro.'; }
         });
