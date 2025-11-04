@@ -1,1 +1,73 @@
-/* complementos locais se precisar */
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  gap: 1rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+}
+
+.page-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.form-card {
+  background: var(--page-surface, #fff);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+
+/* grade opcional já existente */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+.col-12 { grid-column: span 12; }
+.col-md-6 { grid-column: span 12; }
+@media (min-width: 900px) {
+  .col-md-6 { grid-column: span 6; }
+}
+
+/* Barra de ações fixa no canto inferior direito */
+.page-actions {
+  position: sticky;    /* “cola” ao final da página ao rolar */
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 0;
+  background:
+          linear-gradient(to top, var(--page-bg, #fff) 70%, rgba(255,255,255,0));
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* Se preferir SEMPRE no canto da tela, troque por: */
+/*
+.page-actions {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+*/
+
+@media (max-width: 600px) {
+  .page-actions {
+    padding: 12px 0;
+  }
+  .page-actions button {
+    min-width: 120px;
+  }
+}

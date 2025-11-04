@@ -1,79 +1,52 @@
-<app-loading-overlay
-  [active]="busy"
-  [message]="busyMessage">
-</app-loading-overlay>
+<app-loading-overlay [active]="busy" [message]="busyMessage"></app-loading-overlay>
 
 <div class="page-shell">
+    <div class="page-header">
+        <h1>{{ titulo }}</h1>
 
-  <div class="page-header">
-    <h1>{{ titulo }}</h1>
+        <div class="page-header-actions">
+            <button mat-stroked-button color="primary" type="button" (click)="cancelar()">
+                <mat-icon>arrow_back</mat-icon>
+                <span>Voltar</span>
+            </button>
 
-    <div class="page-header-actions">
-      <button mat-stroked-button color="primary" (click)="cancelar()">
-        <mat-icon>arrow_back</mat-icon>
-        <span>Voltar</span>
-      </button>
-
-      <button mat-raised-button color="primary"
-              [disabled]="form.invalid || salvando"
-              (click)="salvar()">
-        <mat-icon>save</mat-icon>
-        <span>Salvar</span>
-      </button>
+            <button mat-raised-button color="primary"
+                    type="submit"
+                    form="carroForm"
+                    [disabled]="form.invalid || salvando">
+                <mat-icon>save</mat-icon>
+                <span>Salvar</span>
+            </button>
+        </div>
     </div>
-  </div>
 
-  <div class="form-card">
-    <h2 class="form-title">Dados do Carro</h2>
+    <div class="form-card">
+        <h2 class="form-title">Dados do Carro</h2>
 
-    <form [formGroup]="form" class="form-grid">
+        <form [formGroup]="form" class="form-grid" id="carroForm" (ngSubmit)="salvar()">
+            <mat-form-field appearance="outline">
+                <mat-label>Marca*</mat-label>
+                <input matInput formControlName="marca" />
+                <mat-error *ngIf="form.get('marca')?.hasError('required')">Obrigatório</mat-error>
+            </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Marca</mat-label>
-        <input matInput formControlName="marca" />
-      </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Modelo*</mat-label>
+                <input matInput formControlName="modelo" />
+                <mat-error *ngIf="form.get('modelo')?.hasError('required')">Obrigatório</mat-error>
+            </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Modelo</mat-label>
-        <input matInput formControlName="modelo" />
-      </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Ano*</mat-label>
+                <input matInput type="number" formControlName="ano" />
+                <mat-error *ngIf="form.get('ano')?.hasError('required')">Obrigatório</mat-error>
+            </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Ano</mat-label>
-        <input matInput type="number" formControlName="ano" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-col">
-        <mat-label>Problema</mat-label>
-        <textarea matInput rows="3" formControlName="problema"></textarea>
-      </mat-form-field>
-
-      <div class="actions-row full-col" style="justify-content:flex-start">
-        <button mat-stroked-button color="primary"
-                type="button"
-                (click)="gerarSugestaoIA()"
-                [disabled]="gerandoIA">
-          <mat-icon>psychology</mat-icon>
-          <span *ngIf="!gerandoIA">Gerar sugestão IA</span>
-          <span *ngIf="gerandoIA">Gerando...</span>
-        </button>
-      </div>
-
-      <mat-form-field appearance="outline" class="full-col">
-        <mat-label>Diagnóstico (sugestão)</mat-label>
-        <textarea matInput rows="6" formControlName="diagnostico"></textarea>
-      </mat-form-field>
-
-      <div class="actions-row full-col">
-        <button mat-stroked-button color="primary" type="button" (click)="cancelar()">
-          Cancelar
-        </button>
-        <button mat-raised-button color="primary" type="button"
-                [disabled]="form.invalid || salvando"
-                (click)="salvar()">
-          Salvar
-        </button>
-      </div>
-    </form>
-  </div>
+            <mat-form-field appearance="outline" class="full-col">
+                <mat-label>Problema* (relato do cliente)</mat-label>
+                <textarea matInput rows="4" formControlName="problema"></textarea>
+                <mat-error *ngIf="form.get('problema')?.hasError('required')">Obrigatório</mat-error>
+            </mat-form-field>
+        </form>
+    </div>
 </div>

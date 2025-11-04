@@ -1,33 +1,59 @@
 <app-loading-overlay
-  [active]="busy"
-  [message]="carregando ? 'Carregando dados da oficina...' : 'Salvando alterações...'">
+        [active]="busy"
+        [message]="carregando ? 'Carregando dados da oficina...' : 'Salvando alterações...'">
 </app-loading-overlay>
 
 <div class="page-shell">
-  <!-- resto permanece igual -->
-  <div class="page-header">
-    <h1>{{ titulo }}</h1>
-
-    <div class="page-header-actions">
-      <button mat-stroked-button color="primary" (click)="cancelar()">
-        <mat-icon>arrow_back</mat-icon>
-        <span>Voltar</span>
-      </button>
-
-      <button mat-raised-button color="primary"
-              [disabled]="form.invalid || salvando"
-              (click)="salvar()">
-        <mat-icon>save</mat-icon>
-        <span>Salvar</span>
-      </button>
+    <!-- Cabeçalho somente com título -->
+    <div class="page-header">
+        <h1 class="page-title">{{ titulo }}</h1>
     </div>
-  </div>
 
-  <div class="form-card">
-    <h2 class="form-title">Dados da Oficina</h2>
+    <div class="form-card">
+        <h2 class="form-title">Dados da Oficina</h2>
 
-    <form [formGroup]="form" class="form-grid">
-      <!-- campos... -->
-    </form>
-  </div>
+        <form [formGroup]="form" class="form-grid" (ngSubmit)="salvar()">
+            <!-- nome -->
+            <mat-form-field appearance="outline" class="col-12 col-md-6">
+                <mat-label>Nome*</mat-label>
+                <input matInput formControlName="nome" maxlength="120" />
+                <mat-hint align="end">{{ (form.get('nome')?.value?.length || 0) }}/120</mat-hint>
+                <mat-error *ngIf="form.get('nome')?.hasError('required')">
+                    Nome é obrigatório
+                </mat-error>
+            </mat-form-field>
+
+            <!-- endereco -->
+            <mat-form-field appearance="outline" class="col-12 col-md-6">
+                <mat-label>Endereço</mat-label>
+                <input matInput formControlName="endereco" maxlength="200" />
+                <mat-hint align="end">{{ (form.get('endereco')?.value?.length || 0) }}/200</mat-hint>
+            </mat-form-field>
+
+            <!-- especialidade -->
+            <mat-form-field appearance="outline" class="col-12 col-md-6">
+                <mat-label>Especialidade</mat-label>
+                <input matInput formControlName="especialidade" maxlength="120" />
+                <mat-hint align="end">{{ (form.get('especialidade')?.value?.length || 0) }}/120</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <!-- Ações fixas no canto inferior direito -->
+    <div class="page-actions">
+        <button mat-stroked-button color="primary" type="button" (click)="cancelar()">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Voltar</span>
+        </button>
+
+        <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="form.invalid || salvando"
+                (click)="salvar()">
+            <mat-icon>save</mat-icon>
+            <span>Salvar</span>
+        </button>
+    </div>
 </div>

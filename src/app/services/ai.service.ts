@@ -1,27 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-export interface AiRequest {
-  problema: string;
+export interface DiagnosticoRequest {
+    problema: string;
+    oficinas?: Array<{
+        id: number;                 // tipado como number (sem undefined)
+        nome: string;
+        especialidade?: string | null;
+        descricao?: string | null;
+    }>;
 }
 
-export interface AiResponse {
-  diagnosticoSugerido: string;
+export interface DiagnosticoResponse {
+    diagnosticoCurto: string;
+    melhorOficinaId: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
+    private baseUrl = `${environment.apiBaseUrl}/ai`; // ex: http://localhost:8080/api
 
-  private baseUrl = `${environment.apiBaseUrl}/ai`;
+    constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {}
-
-  sugerirDiagnostico(problema: string): Observable<AiResponse> {
-    return this.http.post<AiResponse>(
-      `${this.baseUrl}/sugerir-diagnostico`,
-      { problema } as AiRequest
-    );
-  }
+    diagnosticar(req: DiagnosticoRequest): Observable<DiagnosticoResponse> {
+        return this.http.post<DiagnosticoResponse>(`${this.baseUrl}/diagnostico`, req);
+    }
 }

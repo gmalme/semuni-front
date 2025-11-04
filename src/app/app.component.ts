@@ -11,7 +11,6 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-root',
   standalone: true,
   imports: [
-    NgIf,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,

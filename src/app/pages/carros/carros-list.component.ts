@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,15 +15,16 @@ import { LoadingOverlayComponent } from '../../shared/loading-overlay.component'
 @Component({
   selector: 'app-carros-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTooltipModule,
-    LoadingOverlayComponent
-  ],
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatButtonModule,
+        MatIconModule,
+        MatDialogModule,
+        MatTooltipModule,
+        LoadingOverlayComponent,
+        RouterLink
+    ],
   templateUrl: './carros-list.component.html',
   styleUrls: ['./carros-list.component.scss']
 })

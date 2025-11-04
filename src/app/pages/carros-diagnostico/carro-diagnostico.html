@@ -1,0 +1,56 @@
+<!-- carro-diagnostico.component.html -->
+<app-loading-overlay [active]="busy" [message]="busyMessage"></app-loading-overlay>
+
+<div class="page-shell">
+    <div class="page-header">
+        <h1>Diagnóstico do Carro</h1>
+        <div class="page-header-actions">
+            <button mat-stroked-button color="primary" (click)="router.navigate(['/carros'])">
+                <mat-icon>arrow_back</mat-icon>
+                <span>Voltar</span>
+            </button>
+            <button mat-raised-button color="primary" (click)="gerarIA()" [disabled]="gerando || !carro">
+                <mat-icon>psychology</mat-icon>
+                <span *ngIf="!gerando">Gerar diagnóstico</span>
+                <span *ngIf="gerando">Gerando...</span>
+            </button>
+        </div>
+    </div>
+
+    <mat-card class="block">
+        <mat-card-title>Problema relatado</mat-card-title>
+        <mat-card-content>
+            <p>{{ carro?.problema }}</p>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="block" *ngIf="resultado() as r">
+        <mat-card-title>Resultado da IA</mat-card-title>
+        <mat-card-content>
+            <h3>Diagnóstico (resumo)</h3>
+            <p>{{ r.diagnosticoCurto }}</p>
+
+            <h3 class="mt">Melhor Oficina</h3>
+            <ng-container *ngIf="melhorOficina() as of; else idSeco">
+                <p>
+                    <strong>{{ of.nome }}</strong>
+                    <span *ngIf="of.especialidade"> — {{ of.especialidade }}</span>
+                </p>
+                <button mat-stroked-button color="primary" [routerLink]="['/oficinas', of.id]">
+                    Ver detalhes da oficina
+                </button>
+            </ng-container>
+            <ng-template #idSeco>
+                <p>Oficina ID: {{ r.melhorOficinaId }}</p>
+            </ng-template>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-raised-button color="primary" (click)="aplicarNoCarro()">
+                Aplicar no carro
+            </button>
+        </mat-card-actions>
+    </mat-card>
+
+    <div class="error" *ngIf="erro">{{ erro }}</div>
+</div>
