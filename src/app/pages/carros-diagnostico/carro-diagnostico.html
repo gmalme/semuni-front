@@ -38,7 +38,7 @@
                 <mat-select
                         [value]="selectedOficinaId()"
                         (selectionChange)="onSelectOficina($event.value)"
-                        [disabled]="gerando || oficinas.length"
+                        [disabled]="gerando || !oficinas.length"
                 >
                     <mat-option *ngFor="let o of oficinas" [value]="o.id">
                         {{ o.nome }} <span *ngIf="o.especialidade"> — {{ o.especialidade }}</span>
